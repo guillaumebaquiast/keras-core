@@ -330,18 +330,20 @@ def any(x, axis=None, keepdims=False):
 
 
 class Amax(Operation):
-    def __init__(self, axis=None, keepdims=False):
+    def __init__(self, axis=None, keepdims=False, initial=None):
         super().__init__()
         if isinstance(axis, int):
             axis = [axis]
         self.axis = axis
         self.keepdims = keepdims
+        self.initial = initial
 
     def call(self, x):
         return backend.numpy.amax(
             x,
             axis=self.axis,
             keepdims=self.keepdims,
+            initial=self.initial,
         )
 
     def compute_output_spec(self, x):
@@ -352,10 +354,42 @@ class Amax(Operation):
 
 
 @keras_core_export(["keras_core.ops.amax", "keras_core.ops.numpy.amax"])
-def amax(x, axis=None, keepdims=False):
+def amax(x, axis=None, keepdims=False, initial=None):
+    """Return the maximum of an array, or maximum along an axis.
+
+    Args:
+        x: Input tensor.
+        axis: An integer or tuple of integers that represent the axis (or axes)
+            along which to operate. By default, flattened input is used.
+        keepdims: If `True`, the axes which are reduced are left
+            in the result as dimensions with size one. With this option, the
+            result will broadcast correctly against the input array.
+            Default is `False`.
+        initial: Scalar representing the minimum value of an output element.
+        Must be present to allow computation on empty slice. Default is `None`.
+
+    Returns:
+        Tensor containing the maximum (or maxima along axis)  of `x`.
+
+    Examples:
+    >>> x = keras_core.ops.convert_to_tensor(
+    ...      [[0, 1],
+    ...       [2, 3]]
+    ... )
+    >>> keras_core.ops.amax(x) # Maximum of the flattened array
+    ... array(3, shape=(), dtype=int32)
+    >>> keras_core.ops.amax(x, axis=0) # Maxima along first axis
+    ... array([2 3], shape=(2,), dtype=int32)
+    >>> keras_core.ops.amax(x, axis=1)  # Maxima along second axis
+    ... array([1 3], shape=(2,), dtype=int32)
+    >>> keras_core.ops.amax(x, initial=4)
+    ... array(4, shape=(), dtype=int32)
+    """
     if any_symbolic_tensors((x,)):
-        return Amax(axis=axis, keepdims=keepdims).symbolic_call(x)
-    return backend.numpy.amax(x, axis=axis, keepdims=keepdims)
+        return Amax(
+            axis=axis, keepdims=keepdims, initial=initial
+        ).symbolic_call(x)
+    return backend.numpy.amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 class Amin(Operation):
@@ -2040,35 +2074,35 @@ def matmul(x1, x2):
     return backend.numpy.matmul(x1, x2)
 
 
-class Max(Operation):
-    def __init__(self, axis=None, keepdims=False, initial=None):
-        super().__init__()
-        if isinstance(axis, int):
-            self.axis = [axis]
-        else:
-            self.axis = axis
-        self.keepdims = keepdims
-        self.initial = initial
+# class Max(Operation):
+#     def __init__(self, axis=None, keepdims=False, initial=None):
+#         super().__init__()
+#         if isinstance(axis, int):
+#             self.axis = [axis]
+#         else:
+#             self.axis = axis
+#         self.keepdims = keepdims
+#         self.initial = initial
 
-    def call(self, x):
-        return backend.numpy.max(
-            x, axis=self.axis, keepdims=self.keepdims, initial=self.initial
-        )
+#     def call(self, x):
+#         return backend.numpy.max(
+#             x, axis=self.axis, keepdims=self.keepdims, initial=self.initial
+#         )
 
-    def compute_output_spec(self, x):
-        return KerasTensor(
-            reduce_shape(x.shape, axis=self.axis, keepdims=self.keepdims),
-            dtype=x.dtype,
-        )
+#     def compute_output_spec(self, x):
+#         return KerasTensor(
+#             reduce_shape(x.shape, axis=self.axis, keepdims=self.keepdims),
+#             dtype=x.dtype,
+#         )
+
+
+class Max(Amax):
+    pass
 
 
 @keras_core_export(["keras_core.ops.max", "keras_core.ops.numpy.max"])
 def max(x, axis=None, keepdims=False, initial=None):
-    if any_symbolic_tensors((x,)):
-        return Max(axis=axis, keepdims=keepdims, initial=initial).symbolic_call(
-            x
-        )
-    return backend.numpy.max(x, axis=axis, keepdims=keepdims, initial=initial)
+    return amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 class Maximum(Operation):

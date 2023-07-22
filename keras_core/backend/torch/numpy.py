@@ -52,23 +52,6 @@ def mean(x, axis=None, keepdims=False):
     return torch.mean(x, axis=axis, keepdims=keepdims)
 
 
-def max(x, axis=None, keepdims=False, initial=None):
-    x = convert_to_tensor(x)
-    if 0 in x.shape:
-        return 0
-    if axis is None:
-        result = torch.max(x)
-    else:
-        result = amax(x, axis=axis, keepdims=keepdims)
-    if isinstance(getattr(result, "values", None), torch.Tensor):
-        result = result.values
-
-    if initial is not None:
-        initial = convert_to_tensor(initial)
-        return torch.maximum(result, torch.full(result.shape, initial))
-    return result
-
-
 def ones(shape, dtype="float32"):
     dtype = to_torch_dtype(dtype)
     if isinstance(shape, int):
@@ -118,12 +101,22 @@ def any(x, axis=None, keepdims=False):
         return torch.any(x)
 
 
-def amax(x, axis=None, keepdims=False):
+def amax(x, axis=None, keepdims=False, initial=None):
     x = convert_to_tensor(x)
-    if axis is not None:
-        return torch.amax(x, dim=axis, keepdim=keepdims)
+    if 0 in x.shape:
+        return 0
+
+    if axis is None:
+        result = torch.max(x)
     else:
-        return torch.amax(x)
+        result = torch.amax(x, dim=axis, keepdim=keepdims)
+    if isinstance(getattr(result, "values", None), torch.Tensor):
+        result = result.values
+
+    if initial is not None:
+        initial = convert_to_tensor(initial)
+        return torch.maximum(result, torch.full(result.shape, initial))
+    return result
 
 
 def amin(x, axis=None, keepdims=False):

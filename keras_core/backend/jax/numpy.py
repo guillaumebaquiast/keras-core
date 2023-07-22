@@ -55,10 +55,6 @@ def mean(x, axis=None, keepdims=False):
         return cast(outputs, config.floatx())
 
 
-def max(x, axis=None, keepdims=False, initial=None):
-    return jnp.max(x, axis=axis, keepdims=keepdims, initial=initial)
-
-
 def ones(shape, dtype="float32"):
     return jnp.ones(shape, dtype=dtype)
 
@@ -83,8 +79,8 @@ def any(x, axis=None, keepdims=False):
     return jnp.any(x, axis=axis, keepdims=keepdims)
 
 
-def amax(x, axis=None, keepdims=False):
-    return jnp.amax(x, axis=axis, keepdims=keepdims)
+def amax(x, axis=None, keepdims=False, initial=None):
+    return jnp.amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def amin(x, axis=None, keepdims=False):

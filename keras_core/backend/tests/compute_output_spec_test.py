@@ -9,10 +9,10 @@ def single_arg_test_fn(x):
 
 
 def three_args_2_kwarg_test_fn(x1, x2, x3=None):
-    x1 = backend.numpy.max(x1, axis=1)
-    x2 = backend.numpy.max(x2, axis=1)
+    x1 = backend.numpy.amax(x1, axis=1)
+    x2 = backend.numpy.amax(x2, axis=1)
     if x3 is not None:
-        x1 += backend.numpy.max(x3, axis=1)
+        x1 += backend.numpy.amax(x3, axis=1)
     return x1 + x2
 
 

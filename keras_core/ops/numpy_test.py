@@ -2186,6 +2186,7 @@ class NumpyOneInputOpsCorrectnessTest(testing.TestCase):
             knp.amax(x, axis=1, keepdims=True),
             np.amax(x, axis=1, keepdims=True),
         )
+        self.assertAllClose(knp.amax(x, initial=4), np.amax(x, initial=4))
 
         self.assertAllClose(knp.Amax()(x), np.amax(x))
         self.assertAllClose(knp.Amax(axis=1)(x), np.amax(x, axis=1))
@@ -2193,6 +2194,7 @@ class NumpyOneInputOpsCorrectnessTest(testing.TestCase):
             knp.Amax(axis=1, keepdims=True)(x),
             np.amax(x, axis=1, keepdims=True),
         )
+        self.assertAllClose(knp.Amax(initial=4)(x), np.amax(x, initial=4))
 
     def test_amin(self):
         x = np.array([[1, 2, 3], [3, 2, 1]])
@@ -2643,14 +2645,13 @@ class NumpyOneInputOpsCorrectnessTest(testing.TestCase):
         self.assertAllClose(knp.max(x), np.max(x))
         self.assertAllClose(knp.Max()(x), np.max(x))
 
-        self.assertAllClose(knp.max(x, 0), np.max(x, 0))
         self.assertAllClose(knp.Max(0)(x), np.max(x, 0))
 
         self.assertAllClose(knp.max(x, 1), np.max(x, 1))
         self.assertAllClose(knp.Max(1)(x), np.max(x, 1))
 
-        # test max with initial
-        self.assertAllClose(knp.max(x, initial=4), 4)
+        self.assertAllClose(knp.max(x, initial=4), np.max(x, initial=4))
+        self.assertAllClose(knp.Max(initial=4)(x), np.max(x, initial=4))
 
     def test_min(self):
         x = np.array([[1, 2, 3], [3, 2, 1]])

@@ -26,11 +26,6 @@ def mean(x, axis=None, keepdims=False):
     return np.mean(x, axis=axis, keepdims=keepdims)
 
 
-def max(x, axis=None, keepdims=False, initial=None):
-    axis = tuple(axis) if isinstance(axis, list) else axis
-    return np.max(x, axis=axis, keepdims=keepdims, initial=initial)
-
-
 def ones(shape, dtype="float32"):
     return np.ones(shape, dtype=dtype)
 
@@ -57,9 +52,9 @@ def any(x, axis=None, keepdims=False):
     return np.any(x, axis=axis, keepdims=keepdims)
 
 
-def amax(x, axis=None, keepdims=False):
+def amax(x, axis=None, keepdims=False, initial=None):
     axis = tuple(axis) if isinstance(axis, list) else axis
-    return np.amax(x, axis=axis, keepdims=keepdims)
+    return np.amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def amin(x, axis=None, keepdims=False):
