@@ -55,6 +55,10 @@ def mean(x, axis=None, keepdims=False):
         return cast(outputs, config.floatx())
 
 
+def max(x, axis=None, keepdims=False, initial=None):
+    return amax(x, axis=axis, keepdims=keepdims, initial=initial)
+
+
 def ones(shape, dtype="float32"):
     return jnp.ones(shape, dtype=dtype)
 
@@ -83,8 +87,8 @@ def amax(x, axis=None, keepdims=False, initial=None):
     return jnp.amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
-def amin(x, axis=None, keepdims=False):
-    return jnp.amin(x, axis=axis, keepdims=keepdims)
+def amin(x, axis=None, keepdims=False, initial=None):
+    return jnp.amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def append(
@@ -354,7 +358,7 @@ def meshgrid(*x, indexing="xy"):
 
 
 def min(x, axis=None, keepdims=False, initial=None):
-    return jnp.min(x, axis=axis, keepdims=keepdims, initial=initial)
+    return amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def minimum(x1, x2):

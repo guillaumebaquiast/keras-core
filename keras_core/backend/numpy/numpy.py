@@ -57,9 +57,9 @@ def amax(x, axis=None, keepdims=False, initial=None):
     return np.amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
-def amin(x, axis=None, keepdims=False):
+def amin(x, axis=None, keepdims=False, initial=None):
     axis = tuple(axis) if isinstance(axis, list) else axis
-    return np.amin(x, axis=axis, keepdims=keepdims)
+    return np.amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def append(
@@ -339,6 +339,10 @@ def logspace(start, stop, num=50, endpoint=True, base=10, dtype=None, axis=0):
     )
 
 
+def max(x, axis=None, keepdims=False, initial=None):
+    return amax(x, axis=axis, keepdims=keepdims, initial=initial)
+
+
 def maximum(x1, x2):
     return np.maximum(x1, x2)
 
@@ -348,8 +352,7 @@ def meshgrid(*x, indexing="xy"):
 
 
 def min(x, axis=None, keepdims=False, initial=None):
-    axis = tuple(axis) if isinstance(axis, list) else axis
-    return np.min(x, axis=axis, keepdims=keepdims, initial=initial)
+    return amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def minimum(x1, x2):

@@ -2204,6 +2204,7 @@ class NumpyOneInputOpsCorrectnessTest(testing.TestCase):
             knp.amin(x, axis=1, keepdims=True),
             np.amin(x, axis=1, keepdims=True),
         )
+        self.assertAllClose(knp.amin(x, initial=4), np.amin(x, initial=4))
 
         self.assertAllClose(knp.Amin()(x), np.amin(x))
         self.assertAllClose(knp.Amin(axis=1)(x), np.amin(x, axis=1))
@@ -2211,6 +2212,7 @@ class NumpyOneInputOpsCorrectnessTest(testing.TestCase):
             knp.Amin(axis=1, keepdims=True)(x),
             np.amin(x, axis=1, keepdims=True),
         )
+        self.assertAllClose(knp.Amin(initial=4)(x), np.amin(x, initial=4))
 
     def test_square(self):
         x = np.array([[1, 2, 3], [3, 2, 1]])
@@ -2664,8 +2666,8 @@ class NumpyOneInputOpsCorrectnessTest(testing.TestCase):
         self.assertAllClose(knp.min(x, 1), np.min(x, 1))
         self.assertAllClose(knp.Min(1)(x), np.min(x, 1))
 
-        # test min with initial
-        self.assertAllClose(knp.min(x, initial=0), 0)
+        self.assertAllClose(knp.min(x, initial=0), np.min(x, initial=0))
+        self.assertAllClose(knp.Min(initial=0)(x), np.min(x, initial=0))
 
     def test_meshgrid(self):
         x = np.array([1, 2, 3])

@@ -119,12 +119,22 @@ def amax(x, axis=None, keepdims=False, initial=None):
     return result
 
 
-def amin(x, axis=None, keepdims=False):
+def amin(x, axis=None, keepdims=False, initial=None):
     x = convert_to_tensor(x)
-    if axis is not None:
-        return torch.amin(x, dim=axis, keepdim=keepdims)
+    if axis is None:
+        result = torch.min(x)
     else:
-        return torch.amin(x)
+        if isinstance(axis, list):
+            axis = axis[-1]
+        result = torch.min(x, dim=axis, keepdim=keepdims)
+
+    if isinstance(getattr(result, "values", None), torch.Tensor):
+        result = result.values
+
+    if initial is not None:
+        initial = convert_to_tensor(initial)
+        return torch.minimum(result, initial)
+    return result
 
 
 def append(
@@ -531,6 +541,10 @@ def logspace(start, stop, num=50, endpoint=True, base=10, dtype=None, axis=0):
     return logspace
 
 
+def max(x, axis=None, keepdims=False, initial=None):
+    return amax(x, axis=axis, keepdims=keepdims, initial=initial)
+
+
 def maximum(x1, x2):
     x1, x2 = convert_to_tensor(x1), convert_to_tensor(x2)
     return torch.maximum(x1, x2)
@@ -542,21 +556,7 @@ def meshgrid(*x, indexing="xy"):
 
 
 def min(x, axis=None, keepdims=False, initial=None):
-    x = convert_to_tensor(x)
-    if axis is None:
-        result = torch.min(x)
-    else:
-        if isinstance(axis, list):
-            axis = axis[-1]
-        result = torch.min(x, dim=axis, keepdim=keepdims)
-
-    if isinstance(getattr(result, "values", None), torch.Tensor):
-        result = result.values
-
-    if initial is not None:
-        initial = convert_to_tensor(initial)
-        return torch.minimum(result, initial)
-    return result
+    return amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 def minimum(x1, x2):

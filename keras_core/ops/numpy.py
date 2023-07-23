@@ -366,7 +366,8 @@ def amax(x, axis=None, keepdims=False, initial=None):
             result will broadcast correctly against the input array.
             Default is `False`.
         initial: Scalar representing the minimum value of an output element.
-        Must be present to allow computation on empty slice. Default is `None`.
+            Must be present to allow computation on empty slice.
+            Default is `None`.
 
     Returns:
         Tensor containing the maximum (or maxima along axis)  of `x`.
@@ -393,15 +394,21 @@ def amax(x, axis=None, keepdims=False, initial=None):
 
 
 class Amin(Operation):
-    def __init__(self, axis=None, keepdims=False):
+    def __init__(self, axis=None, keepdims=False, initial=None):
         super().__init__()
         if isinstance(axis, int):
             axis = [axis]
         self.axis = axis
         self.keepdims = keepdims
+        self.initial = initial
 
     def call(self, x):
-        return backend.numpy.amin(x, axis=self.axis, keepdims=self.keepdims)
+        return backend.numpy.amin(
+            x,
+            axis=self.axis,
+            keepdims=self.keepdims,
+            initial=self.initial,
+        )
 
     def compute_output_spec(self, x):
         return KerasTensor(
@@ -411,10 +418,32 @@ class Amin(Operation):
 
 
 @keras_core_export(["keras_core.ops.amin", "keras_core.ops.numpy.amin"])
-def amin(x, axis=None, keepdims=False):
+def amin(x, axis=None, keepdims=False, initial=None):
+    """Return the minimum of an array, or minimum along an axis.
+
+    Args:
+        x: Input tensor.
+        axis: An integer or tuple of integers that represent the axis (or axes)
+            along which to operate. By default, flattened input is used.
+        keepdims: If `True`, the axes which are reduced are left
+            in the result as dimensions with size one. With this option, the
+            result will broadcast correctly against the input array.
+            Default is `False`.
+        initial: Scalar representing the maximum value of an output element.
+            Must be present to allow computation on empty slice.
+            Default is `None`.
+
+    Returns:
+        Tensor containing the minimum (or minima along axis) of `x`.
+
+    Examples:
+    # TODO
+    """
     if any_symbolic_tensors((x,)):
-        return Amin(axis=axis, keepdims=keepdims).symbolic_call(x)
-    return backend.numpy.amin(x, axis=axis, keepdims=keepdims)
+        return Amin(axis=axis, keepdims=keepdims, initial=initial).symbolic_call(
+            x
+        )
+    return backend.numpy.amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 class Append(Operation):
@@ -2074,34 +2103,13 @@ def matmul(x1, x2):
     return backend.numpy.matmul(x1, x2)
 
 
-# class Max(Operation):
-#     def __init__(self, axis=None, keepdims=False, initial=None):
-#         super().__init__()
-#         if isinstance(axis, int):
-#             self.axis = [axis]
-#         else:
-#             self.axis = axis
-#         self.keepdims = keepdims
-#         self.initial = initial
-
-#     def call(self, x):
-#         return backend.numpy.max(
-#             x, axis=self.axis, keepdims=self.keepdims, initial=self.initial
-#         )
-
-#     def compute_output_spec(self, x):
-#         return KerasTensor(
-#             reduce_shape(x.shape, axis=self.axis, keepdims=self.keepdims),
-#             dtype=x.dtype,
-#         )
-
-
 class Max(Amax):
     pass
 
 
 @keras_core_export(["keras_core.ops.max", "keras_core.ops.numpy.max"])
 def max(x, axis=None, keepdims=False, initial=None):
+    """Alias for `amax`."""
     return amax(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
@@ -2162,34 +2170,14 @@ def meshgrid(*x, indexing="xy"):
     return backend.numpy.meshgrid(*x, indexing=indexing)
 
 
-class Min(Operation):
-    def __init__(self, axis=None, keepdims=False, initial=None):
-        if isinstance(axis, int):
-            self.axis = [axis]
-        else:
-            self.axis = axis
-        self.keepdims = keepdims
-        self.initial = initial
-
-    def call(self, x):
-        return backend.numpy.min(
-            x, axis=self.axis, keepdims=self.keepdims, initial=self.initial
-        )
-
-    def compute_output_spec(self, x):
-        return KerasTensor(
-            reduce_shape(x.shape, axis=self.axis, keepdims=self.keepdims),
-            dtype=x.dtype,
-        )
+class Min(Amin):
+    pass
 
 
 @keras_core_export(["keras_core.ops.min", "keras_core.ops.numpy.min"])
 def min(x, axis=None, keepdims=False, initial=None):
-    if any_symbolic_tensors((x,)):
-        return Min(axis=axis, keepdims=keepdims, initial=initial).symbolic_call(
-            x
-        )
-    return backend.numpy.min(x, axis=axis, keepdims=keepdims, initial=initial)
+    """Alias for `amin`."""
+    return amin(x, axis=axis, keepdims=keepdims, initial=initial)
 
 
 class Minimum(Operation):
